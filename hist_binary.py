@@ -1,44 +1,84 @@
-import lib, glob, commands, os, operator, pickle
+import lib, glob, commands, os, operator, pickle, sys
+from os.path import isfile, join
+from os import listdir
 import matplotlib.pyplot as plt
 
-folder = "../image/5k_75"
-#folder = "../image/tecnick_1200_75"
-fs = glob.glob(folder + "/*.jpg")
+if len(sys.argv) <= 1:
+	print "Improper usage: python hist_binary.py <path to directory>"
+	sys.exit()
 
-mask = 16
+folder = sys.argv[1]
+print folder
+# folder = "../image/5k_75"
+# folder = "../image/tecnick_1200_75"
+# fs = glob.glob(folder + "/*.jpg")
 
-def encode(s):
+MASK = 16
+
+def encode(s,mask):
 	r = ""
-	for i in range(1, mask + 1):
+	for i in range(1, mask+1):
 		if s[i] != "0":
 			r += "1"
 		else:
 			r += "0"
 	return r
 
+def filterBlock(coef, position):
+	ind = 0
+	for i in range(63,-1,-1):
+		if coef[i] != '0':
+			ind = i
+			break
+	if (ind) != position:
+		return False
+	return True
+
 res = {}
 total = 0
-for f in fs:
-	print f
-	if not os.path.isfile(f + ".block"):
-		commands.getstatusoutput("/opt/libjpeg-turbo-coef/bin/jpegtran -outputcoef %s %s temp.jpg"%(f + ".block", f))
-	
-	ls = open(f + ".block").readlines()
-	
-	for l in ls:
-		s = l.split(":")
-		if s[0] != "0":
-			continue
-		
-		ss = s[1][1:].split(" ")
-		c = encode(ss)
-		total += 1
-		if c in res:
-			res[c] += 1
-		else:
-			res[c] = 1
+# for f in fs:
+# 	print f
+# 	if not os.path.isfile(f + ".out"):
+# 		commands.getstatusoutput("/opt/libjpeg-turbo-coef/bin/jpegtran -outputcoef %s %s temp.jpg"%(f + ".out", f))
 
-print total
+files = [ f for f in listdir(folder) if isfile(join(folder,f)) and f.endswith('.out')]
+
+for f in files:
+	with open(folder+"/"+f,'r') as infile:
+		for line in infile:
+			dccoef = line.split(":")
+			if dccoef[0] != "0":
+				continue
+
+			coef = dccoef[1].split()
+			#filter block here
+			if not filterBlock(coef,MASK):
+				continue
+			c = encode(coef,MASK)
+			total += 1
+			if c in res:
+				res[c] += 1
+			else:
+				res[c] = 1
+
+		print total
+	infile.close()
+	
+# ls = open(f + ".out").readlines()
+
+# for l in ls:
+	
+
+# 	filterBlock(ss)
+# 	# filter to only look for those blocks which have EOB at 16
+# 	c = encode(ss)
+# 	total += 1
+# 	if c in res:
+# 		res[c] += 1
+# 	else:
+# 		res[c] = 1
+
+# print total
 sort = sorted(res.items(), key=operator.itemgetter(1), reverse = True)
 
 x = []
@@ -72,7 +112,7 @@ plt.savefig('PDF.png')
 	
 
 print sort[:100]
-print res["0000000000000000"]
+# print res["0000000000000000"]
 output = open("hist_binary__.pickle", "wb")
 pickle.dump(sort, output)
 
