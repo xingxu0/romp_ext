@@ -35,6 +35,7 @@ ax2 = plt.subplot(gs[1])
 #ax2 = f.add_subplot(212)
 	
 ax.bar(range(len(i_)), y_gain2, hatch='/',edgecolor='b',color='none', width=0.6)
+ax.bar(range(len(i_)), y_overhead, hatch='\\',edgecolor='r',color='none', width=0.6)
 #ax.bar(range(len(i_)), y_gain3, edgecolor="w", color='w',width=0.6)
 #ax.bar(range(len(i_)), y_overhead, hatch='\\',edgecolor='r',color='none', width=0.6)
 
@@ -43,7 +44,11 @@ ax2.bar(range(len(i_)), y_overhead, hatch='\\',edgecolor='r',color='none', width
 
 ax.set_ylim(10, 20)  # outliers only
 ax2.set_ylim(-10, 50)  # most of the data
+ax2.set_xlim(-0.2, 3.8)  # most of the data
+ax.set_xlim(-0.2, 3.8)  # most of the data
 ax2.legend(["Saving", "Overhead"], 2, fontsize = legend_font_size)
+
+ax2.plot([-100, 100], [0,0], "-k")
 
 ax.spines['bottom'].set_visible(False)
 ax2.spines['top'].set_visible(False)
@@ -73,9 +78,9 @@ for x in range(len(i_)):
 	t.append(x+0.3)
 ax2.set_xticks(t)
 ax2.set_xticklabels(i_)
-ax2.set_xlabel('Photos', fontsize = label_font_size)
+ax2.set_xlabel('Number of Photos', fontsize = label_font_size)
 ax2.set_ylabel('a', fontsize = label_font_size, color="w")
-f.text(0.025, 0.5, 'Saving (MB)', fontsize = label_font_size,  rotation="vertical", va="center")
+f.text(0.025, 0.55, 'Size (MB)', fontsize = label_font_size,  rotation="vertical", va="center")
 f.text(0.055, 0.87, '~5e7', fontsize = label_size)
 #f.text(0.06, 0.96, '~4e7', fontsize = label_size)
 
