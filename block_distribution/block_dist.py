@@ -35,7 +35,7 @@ def filterBlock(coef, position):
 	return True
 
 res = {}
-res2 = {}
+res2= {}
 total = 0
 
 files = glob.glob(folder + "/*.jpg")
@@ -57,12 +57,15 @@ for f in files:
 					pass
 			c = encode(coef)
 			total += 1
+			b = lib.get_jpeg_bits(coef, 1, 63, code, True)[0]
+			if b>50:
+				continue
 			if c in res:
 				res[c] += 1
 			else:
-				b = lib.get_jpeg_bits(coef, 1, 63, code, True)[0]
+				#b = lib.get_jpeg_bits(coef, 1, 63, code, True)[0]
 				res[c] = 1
-				res2[c] = b
+				#res2[c] = b
 		print total
 	infile.close()
 	
@@ -82,7 +85,7 @@ for f in files:
 
 # print total
 #sort = sorted(res.items(), key=operator.itemgetter(1), reverse = True)
-#for x_ in sort[:100]:
+#for x_ in sort:
 #	x = x_[0]
 #	p = res[x]*1.0/total
 #	print x, res[x], res2[x], res[x]*1.0/total, math.log(1.0/p, 2) 
@@ -91,6 +94,6 @@ output = open("block_dist.pickle", "wb")
 pickle.dump(res, output)
 output.close()
 
-output2 = open("block_dist_jpeg.pickle", "wb")
-pickle.dump(res2, output2)
-output2.close()
+#output2 = open("block_dist_jpeg.pickle", "wb")
+#pickle.dump(res2, output2)
+#output2.close()

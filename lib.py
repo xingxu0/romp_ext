@@ -1018,37 +1018,6 @@ def record_code(b, b_o, now, c, start, end, oc, b_mcu1, b_mcu2):
 		wrong_keys += 1
 	return start, d1, d2, c
 
-def get_eob_pos(b, now):
-	if now > 0:
-		b_pre = b[now-1]
-	else:
-		b_pre = [0]*64
-	for i in range(63, 0, -1):
-		if b_pre[i] != 0:
-			break
-	if i <= 10:
-		return i
-	if i < 15:
-		return 11
-	if i < 20:
-		return 12
-	if i < 30:
-		return 13
-	return 14
-	
-
-def record_code_eob(b, b_o, now, c, start, end, oc, b_mcu1, b_mcu2):
-	global dep1, dep2, wrong_keys
-	d1= get_dep(b, b_o, now, start, end, dep1, "1", b_mcu1, b_mcu2)
-	d2= get_dep(b, b_o, now, start, end, dep2, "2", b_mcu1, b_mcu2)
-	d3 = get_eob_pos(b, now)
-	if d1<len(oc[start]) and d2<len(oc[start][d1]):
-		oc[start][d1][d2][d3][c] += 1
-	else:
-		print "*", d1, d2, d3
-		wrong_keys += 1
-	return start, d1, d2, c, d3
-
 def record_jpeg(b, b_o, now, c, start, end, oc, b_mcu1, b_mcu2):
 	global dep1, dep2, code, wrong_keys, wrong_desc, wrong_saw
 	d1 = get_dep(b, b_o, now, start, end, dep1, "1", b_mcu1, b_mcu2)
@@ -1065,27 +1034,7 @@ def record_jpeg(b, b_o, now, c, start, end, oc, b_mcu1, b_mcu2):
 				wrong_desc.append(len(apc_bins[i]))
 			wrong_desc.append(b[now])
 			wrong_desc.append(b_o[now])
-			wrong_saw = True
-			
-def record_jpeg_eob(b, b_o, now, c, start, end, oc, b_mcu1, b_mcu2):
-	global dep1, dep2, code, wrong_keys, wrong_desc, wrong_saw
-	d1 = get_dep(b, b_o, now, start, end, dep1, "1", b_mcu1, b_mcu2)
-	d2 = get_dep(b, b_o, now, start, end, dep2, "2", b_mcu1, b_mcu2)
-	d3 = get_eob_pos(b, now)
-	if d1<len(oc[start]) and d2<len(oc[start][d1]):
-		oc[start][d1][d2][d3] += code[abs(c)]
-	else:
-		print "!"
-		wrong_keys += 1
-		if not wrong_saw:
-			wrong_desc = []
-			wrong_desc.append(d1)
-			wrong_desc.append(d2)
-			for i in range(1,64):
-				wrong_desc.append(len(apc_bins[i]))
-			wrong_desc.append(b[now])
-			wrong_desc.append(b_o[now])
-			wrong_saw = True			
+			wrong_saw = True		
 		
 
 def parse_dep(s, apc_bins):
