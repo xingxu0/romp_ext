@@ -65,7 +65,7 @@ for i in i_:
 ax.set_xticklabels(s)
 
 ax.set_xlabel('Number of Photos', fontsize = label_font_size)
-ax.set_ylabel('Size (MB)', fontsize = label_font_size)
+ax.set_ylabel('Normalized Size', fontsize = label_font_size)
 ax.set_xlim(l_x[0]-0.5+bar_d, r_x[len(r_x)-1]+0.5)  # most of the data
 ax.set_ylim(0, 1.6)
 ax.tick_params(axis='x', pad=8)
